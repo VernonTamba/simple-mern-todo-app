@@ -5,6 +5,7 @@ import "./App.css";
 import axios from "./axios";
 import Button from "@mui/material/Button";
 import Input from "@mui/material/Input";
+import backgroundVideo from "./background.mp4";
 
 function App() {
   const [todos, setTodos] = useState([
@@ -30,18 +31,22 @@ function App() {
     return getTodos;
   };
 
-  const createTodo = async () => {
-    const data = {
-      todo: todoInput,
-    };
-    const postTodos = await axios.post("/", data);
-    setTodos([...todos, postTodos]);
-    setTodoInput("");
-    // For testing purposes
+  // For testing purposes
+  const createTodo = () => {
     setCreateState(false);
-
-    return postTodos;
   };
+
+  // const createTodo = async () => {
+  //   const data = {
+  //     todo: todoInput,
+  //   };
+  //   const postTodos = await axios.post("/", data);
+  //   setTodos([...todos, postTodos]);
+  //   setTodoInput("");
+  //   setCreateState(false);
+
+  //   return postTodos;
+  // };
 
   const todoInputChange = (event) => {
     event.preventDefault();
@@ -55,24 +60,31 @@ function App() {
 
   return (
     <div className="App container">
-      {/* Create a "Create new Todo" component */}
-      <Button variant="contained" onClick={() => setCreateState(true)}>
-        Create Todo
-      </Button>
-      {createState && (
-        <Input
-          type="text"
-          placeholder="What do you want todo?"
-          onChange={todoInputChange}
-          value={todoInput}
-        />
-      )}
-      {createState && (
-        <Button variant="contained" onClick={createTodo}>
-          Post Todo
-        </Button>
-      )}
-
+      <video autoPlay loop muted>
+        <source src={backgroundVideo} type="video/mp4" />
+      </video>
+      {/* TODO: CENTER THIS! */}
+      <div className="d-flex flex-column justify-content-center">
+        <h1>SIMPLE TODO APP</h1>
+        <div>
+          <Button variant="contained" onClick={() => setCreateState(true)}>
+            Create Todo
+          </Button>
+          {createState && (
+            <Input
+              type="text"
+              placeholder="What do you want todo?"
+              onChange={todoInputChange}
+              value={todoInput}
+            />
+          )}
+          {createState && (
+            <Button variant="contained" onClick={createTodo}>
+              Post Todo
+            </Button>
+          )}
+        </div>
+      </div>
       <div className="row">
         {todos.map((todo, index) => (
           <TodoCard key={index} todo={todo} />
