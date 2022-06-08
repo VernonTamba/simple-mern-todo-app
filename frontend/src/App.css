@@ -1,6 +1,6 @@
 .App {
 }
-/* 
+
 video {
   object-fit: cover;
   width: 100vw;
@@ -8,4 +8,5 @@ video {
   position: fixed;
   top: 0;
   left: 0;
-} */
+  z-index: -100;
+}

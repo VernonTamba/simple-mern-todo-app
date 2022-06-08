@@ -6,6 +6,7 @@ import axios from "./axios";
 import Button from "@mui/material/Button";
 import Input from "@mui/material/Input";
 import backgroundVideo from "./background.mp4";
+import AddIcon from "@mui/icons-material/Add";
 
 function App() {
   const [todos, setTodos] = useState([
@@ -59,19 +60,25 @@ function App() {
   // }, []);
 
   return (
-    <div className="App container">
-      <video autoPlay loop muted>
-        <source src={backgroundVideo} type="video/mp4" />
-      </video>
+    <div className="App container my-4">
       {/* TODO: CENTER THIS! */}
       <div className="d-flex flex-column justify-content-center">
-        <h1>SIMPLE TODO APP</h1>
-        <div>
-          <Button variant="contained" onClick={() => setCreateState(true)}>
-            Create Todo
-          </Button>
+        <h1 className="text-center text-bg-dark border border-light rounded-5 p-2">
+          SIMPLE TODO APP
+        </h1>
+        <div className="d-flex justify-content-center align-items-center">
+          {!createState ? (
+            <Button variant="contained" onClick={() => setCreateState(true)}>
+              Create Todo
+            </Button>
+          ) : (
+            <Button variant="contained" onClick={() => setCreateState(false)}>
+              Cancel
+            </Button>
+          )}
           {createState && (
             <Input
+              className="mx-3"
               type="text"
               placeholder="What do you want todo?"
               onChange={todoInputChange}
@@ -80,16 +87,20 @@ function App() {
           )}
           {createState && (
             <Button variant="contained" onClick={createTodo}>
-              Post Todo
+              <AddIcon />
             </Button>
           )}
         </div>
       </div>
-      <div className="row">
+      <div className="row mt-4">
         {todos.map((todo, index) => (
           <TodoCard key={index} todo={todo} />
         ))}
       </div>
+      {/* VIDEO BACKGROUND */}
+      <video autoPlay loop muted>
+        <source src={backgroundVideo} type="video/mp4" />
+      </video>
     </div>
   );
 }
