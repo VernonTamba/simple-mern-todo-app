@@ -1,6 +1,15 @@
 .App {
 }
 
+.card {
+  transition: all 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
 video {
   object-fit: cover;
   width: 100vw;
