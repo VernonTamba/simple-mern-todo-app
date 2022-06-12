@@ -13,21 +13,27 @@ import { motion, AnimatePresence } from "framer-motion";
 const TodoMainPage = () => {
   const [todos, setTodos] = useState([
     {
+      _id: "1",
       todo: "Playing PUBG Mobile",
     },
     {
+      _id: "2",
       todo: "Watching Neflix",
     },
     {
+      _id: "3",
       todo: "Coding",
     },
     {
+      _id: "4",
       todo: "YouTube streaming",
     },
     {
+      _id: "5",
       todo: "Cooking with brother-in-law and prepare the food for dinner with the family",
     },
     {
+      _id: "6",
       todo: "Washing the dishes",
     },
   ]);
@@ -120,7 +126,7 @@ const TodoMainPage = () => {
       </div>
       <div className="row mt-4 ">
         {todos.map((todo, index) => (
-          <TodoCard key={index} todo={todo} />
+          <TodoCard key={index} todo={todo} todos={todos} />
         ))}
       </div>
     </div>
