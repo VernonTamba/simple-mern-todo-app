@@ -1,4 +1,4 @@
-// Use Framer Motion: Page Transition (to transition from landing page to main page and vice versa)
+// Todo: Use Framer Motion: Page Transition (to transition from landing page to main page and vice versa)
 import React from "react";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";

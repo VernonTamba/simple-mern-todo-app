@@ -1,4 +1,5 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useContext } from "react";
+import TodoContext from "../ContextTodo";
 import TodoCard from "./TodoCard";
 import axios from "../axios";
 import Button from "@mui/material/Button";
@@ -11,32 +12,34 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { motion, AnimatePresence } from "framer-motion";
 
 const TodoMainPage = () => {
-  const [todos, setTodos] = useState([
-    {
-      _id: "1",
-      todo: "Playing PUBG Mobile",
-    },
-    {
-      _id: "2",
-      todo: "Watching Neflix",
-    },
-    {
-      _id: "3",
-      todo: "Coding",
-    },
-    {
-      _id: "4",
-      todo: "YouTube streaming",
-    },
-    {
-      _id: "5",
-      todo: "Cooking with brother-in-law and prepare the food for dinner with the family",
-    },
-    {
-      _id: "6",
-      todo: "Washing the dishes",
-    },
-  ]);
+  // const [todos, setTodos] = useState([
+  //   {
+  //     _id: "1",
+  //     todo: "Playing PUBG Mobile",
+  //   },
+  //   {
+  //     _id: "2",
+  //     todo: "Watching Neflix",
+  //   },
+  //   {
+  //     _id: "3",
+  //     todo: "Coding",
+  //   },
+  //   {
+  //     _id: "4",
+  //     todo: "YouTube streaming",
+  //   },
+  //   {
+  //     _id: "5",
+  //     todo: "Cooking with brother-in-law and prepare the food for dinner with the family",
+  //   },
+  //   {
+  //     _id: "6",
+  //     todo: "Washing the dishes",
+  //   },
+  // ]);
+  const { todos, setTodos } = useContext(TodoContext);
+  // const [todos, setTodos] = useState(todos);
   const [todoInput, setTodoInput] = useState("");
 
   // Test for creating todo
@@ -85,31 +88,38 @@ const TodoMainPage = () => {
         <div className="d-flex justify-content-center align-items-center">
           {!createState && (
             <Link className="mx-2" to="/">
-              <Button color="secondary" variant="contained">
-                <HomeIcon />
+              <Button
+                style={{ backgroundColor: "#90caf9" }}
+                variant="contained"
+              >
+                <HomeIcon style={{ color: "#0a1929" }} />
               </Button>
             </Link>
           )}
 
           {!createState ? (
             <Button
-              color="secondary"
+              style={{ backgroundColor: "#90caf9" }}
               variant="contained"
               onClick={() => setCreateState(true)}
             >
-              <AddIcon />
+              <AddIcon style={{ color: "#0a1929" }} />
             </Button>
           ) : (
             <Button
-              color="secondary"
+              style={{ backgroundColor: "#90caf9" }}
               variant="contained"
-              onClick={() => setCreateState(false)}
+              onClick={() => {
+                setCreateState(false);
+                setTodoInput("");
+              }}
             >
-              <CancelIcon />
+              <CancelIcon style={{ color: "#0a1929" }} />
             </Button>
           )}
           {createState && (
             <Input
+              style={{ color: "white" }}
               className="mx-3"
               type="text"
               placeholder="What do you want todo?"
@@ -118,7 +128,12 @@ const TodoMainPage = () => {
             />
           )}
           {createState && (
-            <Button color="secondary" variant="contained" onClick={createTodo}>
+            <Button
+              disabled={!todoInput}
+              color="success"
+              variant="contained"
+              onClick={createTodo}
+            >
               <CreateIcon />
             </Button>
           )}
@@ -126,7 +141,7 @@ const TodoMainPage = () => {
       </div>
       <div className="row mt-4 ">
         {todos.map((todo, index) => (
-          <TodoCard key={index} todo={todo} todos={todos} />
+          <TodoCard key={index} todo={todo} todos={[todos, setTodos]} />
         ))}
       </div>
     </div>

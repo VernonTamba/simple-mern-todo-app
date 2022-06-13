@@ -13,6 +13,7 @@ function App() {
           <Route path="/" exact element={<TodoLandingPage />} />
           <Route path="/main" element={<TodoMainPage />} />
         </Routes>
+
         {/* VIDEO BACKGROUND */}
         <video autoPlay loop muted>
           <source src={backgroundVideo} type="video/mp4" />
