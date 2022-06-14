@@ -2,8 +2,8 @@ import { React, useState, useContext } from "react";
 import TodoContext from "../ContextTodo";
 import "../App.css";
 import Button from "@mui/material/Button";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // To do completion/deletion
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"; // To do edit/rename
+import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Symbolizes completion/deletion
+import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline"; // Symbolizes edit/rename
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import Card from "@mui/material/Card";
@@ -12,14 +12,28 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
+import Input from "@mui/material/Input";
 
 const TodoCard = ({ todo }) => {
+  const [todoModalInput, setTodoModalInput] = useState(todo.todo);
   const [cardState, setCardState] = useState(false);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const { removeTodo } = useContext(TodoContext);
+  const { updateTodo, removeTodo } = useContext(TodoContext);
+
+  const updateTodoAndCloseModal = (todoID, todoModalInput) => {
+    console.log(todoID, todoModalInput);
+    updateTodo(todoID, todoModalInput);
+    handleClose();
+  };
+
+  const todoModalInputChange = (event) => {
+    event.preventDefault();
+
+    setTodoModalInput(event.target.value);
+  };
 
   const style = {
     position: "absolute",
@@ -27,8 +41,7 @@ const TodoCard = ({ todo }) => {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 400,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
+    bgcolor: "#0a1929",
     boxShadow: 24,
     p: 4,
   };
@@ -84,13 +97,37 @@ const TodoCard = ({ todo }) => {
                 aria-describedby="modal-modal-description"
               >
                 <Box sx={style}>
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    component="h2"
+                  {todo.todo === todoModalInput ? (
+                    <Input
+                      style={{ color: "white" }}
+                      className="mx-5"
+                      type="text"
+                      defaultValue={todo.todo}
+                      onChange={todoModalInputChange}
+                      value={todoModalInput}
+                      error
+                    />
+                  ) : (
+                    <Input
+                      style={{ color: "white" }}
+                      className="mx-5"
+                      type="text"
+                      defaultValue={todo.todo}
+                      onChange={todoModalInputChange}
+                      value={todoModalInput}
+                    />
+                  )}
+                  <Button
+                    disabled={todo.todo === todoModalInput}
+                    className="mx-5 my-3"
+                    color="warning"
+                    variant="contained"
+                    onClick={() =>
+                      updateTodoAndCloseModal(todo._id, todoModalInput)
+                    }
                   >
-                    {todo.todo}
-                  </Typography>
+                    <DriveFileRenameOutlineIcon style={{ color: "#0a1929" }} />
+                  </Button>
                 </Box>
               </Modal>
             </div>

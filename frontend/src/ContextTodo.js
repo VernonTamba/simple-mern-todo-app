@@ -1,45 +1,78 @@
 import { createContext, useState } from "react";
+import axios from "./axios";
 
 const TodoContext = createContext();
 
 export function TodoProvider({ children }) {
-  //   const [todos, setTodos] = useState([]);
-  const [todos, setTodos] = useState([
-    {
-      _id: "1",
-      todo: "Playing PUBG Mobile",
-    },
-    {
-      _id: "2",
-      todo: "Watching Neflix",
-    },
-    {
-      _id: "3",
-      todo: "Coding",
-    },
-    {
-      _id: "4",
-      todo: "YouTube streaming",
-    },
-    {
-      _id: "5",
-      todo: "Cooking with brother-in-law and prepare the food for dinner with the family",
-    },
-    {
-      _id: "6",
-      todo: "Washing the dishes",
-    },
-  ]);
+  const [todos, setTodos] = useState([]);
+  const [todoInput, setTodoInput] = useState("");
+  const [createState, setCreateState] = useState(false);
 
-  const removeTodo = (todoID) => {
-    console.log(todoID);
+  // Todo: Apply/use Pusher to make everything REAL-TIME!
+
+  // CRUD METHODS/OPERATIONS
+  // READ (GET)
+  const fetchTodos = async () => {
+    const getTodos = await axios.get("/");
+    setTodos(getTodos.data);
+
+    return getTodos;
+  };
+
+  // CREATE (POST)
+  const createTodo = async () => {
+    const data = {
+      todo: todoInput,
+    };
+    const postTodos = await axios.post("/", data);
+    setTodos([...todos, postTodos]);
+    setTodoInput("");
+    setCreateState(false);
+
+    return postTodos;
+  };
+
+  // UPDATE (CHANGE)
+  const updateTodo = async (todoID, updatedTodoInput) => {
+    const data = {
+      todo: updatedTodoInput,
+    };
+    const updatedTodo = await axios.put(`/${todoID}`, data);
+
+    // todos.forEach((todo) => {
+    //   if(todoID === todo._id){
+    //     setTodos[todoID]
+    //   }
+    // })
+
+    return updatedTodo;
+  };
+
+  // DELETE (REMOVE)
+  const removeTodo = async (todoID) => {
+    const deletedTodo = await axios.delete(`/${todoID}`);
     setTodos((previousTodos) =>
       previousTodos.filter((previousTodo) => previousTodo._id !== todoID)
     );
+
+    return deletedTodo;
   };
 
   return (
-    <TodoContext.Provider value={{ todos, removeTodo }}>
+    <TodoContext.Provider
+      value={{
+        todos,
+        setTodos,
+        todoInput,
+        setTodoInput,
+        createState,
+        setCreateState,
+        fetchTodos,
+        createTodo,
+        updateTodo,
+        removeTodo,
+      }}
+    >
       {children}
     </TodoContext.Provider>
   );

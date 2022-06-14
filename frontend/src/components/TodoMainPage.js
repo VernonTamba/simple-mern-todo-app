@@ -1,7 +1,6 @@
-import { React, useState, useEffect, useContext } from "react";
+import { React, useEffect, useContext } from "react";
 import TodoContext from "../ContextTodo";
 import TodoCard from "./TodoCard";
-import axios from "../axios";
 import Button from "@mui/material/Button";
 import Input from "@mui/material/Input";
 import { Link } from "react-router-dom";
@@ -12,62 +11,16 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { motion, AnimatePresence } from "framer-motion";
 
 const TodoMainPage = () => {
-  // const [todos, setTodos] = useState([
-  //   {
-  //     _id: "1",
-  //     todo: "Playing PUBG Mobile",
-  //   },
-  //   {
-  //     _id: "2",
-  //     todo: "Watching Neflix",
-  //   },
-  //   {
-  //     _id: "3",
-  //     todo: "Coding",
-  //   },
-  //   {
-  //     _id: "4",
-  //     todo: "YouTube streaming",
-  //   },
-  //   {
-  //     _id: "5",
-  //     todo: "Cooking with brother-in-law and prepare the food for dinner with the family",
-  //   },
-  //   {
-  //     _id: "6",
-  //     todo: "Washing the dishes",
-  //   },
-  // ]);
-  const { todos, setTodos } = useContext(TodoContext);
-  // const [todos, setTodos] = useState(todos);
-  const [todoInput, setTodoInput] = useState("");
-
-  // Test for creating todo
-  const [createState, setCreateState] = useState(false);
-
-  const fetchTodos = async () => {
-    const getTodos = await axios.get("/");
-    setTodos(getTodos.data);
-
-    return getTodos;
-  };
-
-  // For testing purposes
-  const createTodo = () => {
-    setCreateState(false);
-  };
-
-  // const createTodo = async () => {
-  //   const data = {
-  //     todo: todoInput,
-  //   };
-  //   const postTodos = await axios.post("/", data);
-  //   setTodos([...todos, postTodos]);
-  //   setTodoInput("");
-  //   setCreateState(false);
-
-  //   return postTodos;
-  // };
+  const {
+    todos,
+    setTodos,
+    todoInput,
+    setTodoInput,
+    createState,
+    setCreateState,
+    fetchTodos,
+    createTodo,
+  } = useContext(TodoContext);
 
   const todoInputChange = (event) => {
     event.preventDefault();
@@ -75,12 +28,12 @@ const TodoMainPage = () => {
     setTodoInput(event.target.value);
   };
 
-  // useEffect(() => {
-  //   fetchTodos();
-  // }, []);
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
   return (
     <div className="App container my-4">
-      {/* TODO: CENTER THIS! */}
       <div className="d-flex flex-column justify-content-center">
         <h1 className="text-center text-bg-dark rounded-5 p-2">
           SIMPLE TODO APP
@@ -139,6 +92,7 @@ const TodoMainPage = () => {
           )}
         </div>
       </div>
+      {/* Todo: Use framer motion (animate presence) to make a smooth transition when the todo is inserted and deleted */}
       <div className="row mt-4 ">
         {todos.map((todo, index) => (
           <TodoCard key={index} todo={todo} todos={[todos, setTodos]} />
