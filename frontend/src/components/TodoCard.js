@@ -1,4 +1,4 @@
-import { React, useState, useContext } from "react";
+import { React, useState, useEffect, useContext } from "react";
 import TodoContext from "../ContextTodo";
 import "../App.css";
 import Button from "@mui/material/Button";
@@ -13,6 +13,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Input from "@mui/material/Input";
+import Pusher from "pusher-js";
 
 const TodoCard = ({ todo }) => {
   const [todoModalInput, setTodoModalInput] = useState(todo.todo);
@@ -21,7 +22,7 @@ const TodoCard = ({ todo }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const { updateTodo, removeTodo } = useContext(TodoContext);
+  const { todos, setTodos, updateTodo, removeTodo } = useContext(TodoContext);
 
   const updateTodoAndCloseModal = (todoID, todoModalInput) => {
     console.log(todoID, todoModalInput);
@@ -34,6 +35,27 @@ const TodoCard = ({ todo }) => {
 
     setTodoModalInput(event.target.value);
   };
+
+  //Todo: Pusher for deletion is still not working correctly. Fix this!
+  // useEffect(() => {
+  //   const pusher = new Pusher("eb0a335b1e346049726b", {
+  //     cluster: "ap1",
+  //   });
+
+  //   const channel = pusher.subscribe("todos");
+  //   channel.bind("deleted", (deletedTodo) => {
+  //     setTodos((previousTodos) =>
+  //       previousTodos.filter(
+  //         (previousTodo) => previousTodo._id !== deletedTodo._id
+  //       )
+  //     );
+  //   });
+
+  //   return () => {
+  //     channel.unbind_all();
+  //     channel.unsubscribe();
+  //   };
+  // }, [todos]);
 
   const style = {
     position: "absolute",

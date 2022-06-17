@@ -9,6 +9,7 @@ import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { motion, AnimatePresence } from "framer-motion";
+import Pusher from "pusher-js";
 
 const TodoMainPage = () => {
   const {
@@ -23,14 +24,28 @@ const TodoMainPage = () => {
   } = useContext(TodoContext);
 
   const todoInputChange = (event) => {
-    event.preventDefault();
-
     setTodoInput(event.target.value);
   };
 
   useEffect(() => {
     fetchTodos();
   }, []);
+
+  useEffect(() => {
+    const pusher = new Pusher("eb0a335b1e346049726b", {
+      cluster: "ap1",
+    });
+
+    const channel = pusher.subscribe("todos");
+    channel.bind("inserted", (newTodo) => {
+      setTodos([...todos, newTodo]);
+    });
+
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [todos]);
 
   return (
     <div className="App container my-4">
@@ -49,47 +64,49 @@ const TodoMainPage = () => {
               </Button>
             </Link>
           )}
-
-          {!createState ? (
-            <Button
-              style={{ backgroundColor: "#90caf9" }}
-              variant="contained"
-              onClick={() => setCreateState(true)}
-            >
-              <AddIcon style={{ color: "#0a1929" }} />
-            </Button>
-          ) : (
-            <Button
-              style={{ backgroundColor: "#90caf9" }}
-              variant="contained"
-              onClick={() => {
-                setCreateState(false);
-                setTodoInput("");
-              }}
-            >
-              <CancelIcon style={{ color: "#0a1929" }} />
-            </Button>
-          )}
-          {createState && (
-            <Input
-              style={{ color: "white" }}
-              className="mx-3"
-              type="text"
-              placeholder="What do you want todo?"
-              onChange={todoInputChange}
-              value={todoInput}
-            />
-          )}
-          {createState && (
-            <Button
-              disabled={!todoInput}
-              color="success"
-              variant="contained"
-              onClick={createTodo}
-            >
-              <CreateIcon />
-            </Button>
-          )}
+          <form>
+            {!createState ? (
+              <Button
+                style={{ backgroundColor: "#90caf9" }}
+                variant="contained"
+                onClick={() => setCreateState(true)}
+              >
+                <AddIcon style={{ color: "#0a1929" }} />
+              </Button>
+            ) : (
+              <Button
+                style={{ backgroundColor: "#90caf9" }}
+                variant="contained"
+                onClick={() => {
+                  setCreateState(false);
+                  setTodoInput("");
+                }}
+              >
+                <CancelIcon style={{ color: "#0a1929" }} />
+              </Button>
+            )}
+            {createState && (
+              <Input
+                style={{ color: "white" }}
+                className="mx-3"
+                type="text"
+                placeholder="What do you want todo?"
+                onChange={todoInputChange}
+                value={todoInput}
+              />
+            )}
+            {createState && (
+              <Button
+                type="submit"
+                disabled={!todoInput}
+                color="success"
+                variant="contained"
+                onClick={createTodo}
+              >
+                <CreateIcon />
+              </Button>
+            )}
+          </form>
         </div>
       </div>
       {/* Todo: Use framer motion (animate presence) to make a smooth transition when the todo is inserted and deleted */}

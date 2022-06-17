@@ -8,7 +8,7 @@ export function TodoProvider({ children }) {
   const [todoInput, setTodoInput] = useState("");
   const [createState, setCreateState] = useState(false);
 
-  // Todo: Apply/use Pusher to make everything REAL-TIME!
+  // Todo: Apply/use Pusher to make everything REAL-TIME! NOW: UPDATING TODO!
 
   // CRUD METHODS/OPERATIONS
   // READ (GET)
@@ -20,12 +20,13 @@ export function TodoProvider({ children }) {
   };
 
   // CREATE (POST)
-  const createTodo = async () => {
+  const createTodo = async (event) => {
+    event.preventDefault();
+
     const data = {
       todo: todoInput,
     };
     const postTodos = await axios.post("/", data);
-    setTodos([...todos, postTodos]);
     setTodoInput("");
     setCreateState(false);
 
@@ -38,12 +39,6 @@ export function TodoProvider({ children }) {
       todo: updatedTodoInput,
     };
     const updatedTodo = await axios.put(`/${todoID}`, data);
-
-    // todos.forEach((todo) => {
-    //   if(todoID === todo._id){
-    //     setTodos[todoID]
-    //   }
-    // })
 
     return updatedTodo;
   };
