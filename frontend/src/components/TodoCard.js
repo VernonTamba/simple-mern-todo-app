@@ -28,6 +28,7 @@ const TodoCard = ({ todo }) => {
     console.log(todoID, todoModalInput);
     updateTodo(todoID, todoModalInput);
     handleClose();
+    setCardState(false);
   };
 
   const todoModalInputChange = (event) => {
@@ -35,6 +36,44 @@ const TodoCard = ({ todo }) => {
 
     setTodoModalInput(event.target.value);
   };
+
+  useEffect(() => {
+    todos.map((todo, index) => {
+      if (todo.todo === "Play PUBG Mobile") {
+        // console.log("Gotchuuuuu!");
+        return (todo.todo = "Changed todo");
+      }
+    });
+    console.log(todos);
+  }, []);
+
+  // Pusher-js or Pusher for updating todo
+  // TODO: Not working correctly yet! Not real-time yet!
+  useEffect(() => {
+    const pusher = new Pusher("eb0a335b1e346049726b", {
+      cluster: "ap1",
+    });
+
+    const channel = pusher.subscribe("todos");
+    channel.bind("updated", (updatedTodo) => {
+      // setTodos(
+      todos.map((todo) => {
+        if (todo._id === updatedTodo._id) {
+          // console.log("Gotchuuuuu!");
+          return (todo.todo = updatedTodo.todo);
+        }
+      });
+      // );
+      setTodos(todos);
+    });
+
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [todos]);
+
+  // console.log(todos[3]);
 
   //Todo: Pusher for deletion is still not working correctly. Fix this!
   // useEffect(() => {
