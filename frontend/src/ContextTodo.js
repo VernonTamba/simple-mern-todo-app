@@ -7,8 +7,7 @@ export function TodoProvider({ children }) {
   const [todos, setTodos] = useState([]);
   const [todoInput, setTodoInput] = useState("");
   const [createState, setCreateState] = useState(false);
-
-  // Todo: Apply/use Pusher to make everything REAL-TIME! NOW: UPDATING TODO! ALMOST THERE!
+  const [cardID, setCardID] = useState("");
 
   // CRUD METHODS/OPERATIONS
   // READ (GET)
@@ -39,7 +38,6 @@ export function TodoProvider({ children }) {
       todo: updatedTodoInput,
     };
     const updatedTodo = await axios.put(`/${todoID}`, data);
-    setCreateState(false);
 
     return updatedTodo;
   };
@@ -67,6 +65,8 @@ export function TodoProvider({ children }) {
         createTodo,
         updateTodo,
         removeTodo,
+        cardID,
+        setCardID,
       }}
     >
       {children}

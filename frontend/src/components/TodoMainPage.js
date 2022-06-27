@@ -23,14 +23,17 @@ const TodoMainPage = () => {
     createTodo,
   } = useContext(TodoContext);
 
+  // Track the input change
   const todoInputChange = (event) => {
     setTodoInput(event.target.value);
   };
 
+  // Fetch all todos
   useEffect(() => {
     fetchTodos();
   }, []);
 
+  // Pusher-js or Pusher for creating todo
   useEffect(() => {
     const pusher = new Pusher("eb0a335b1e346049726b", {
       cluster: "ap1",
@@ -109,10 +112,10 @@ const TodoMainPage = () => {
           </form>
         </div>
       </div>
-      {/* Todo: Use framer motion (animate presence) to make a smooth transition when the todo is inserted and deleted */}
+      {/* Todo: Use framer motion (animate presence) to make a smooth transition when the todo is inserted and deleted (exit) */}
       <div className="row mt-4 ">
         {todos.map((todo, index) => (
-          <TodoCard key={index} todo={todo} todos={[todos, setTodos]} />
+          <TodoCard key={index} todo={todo} />
         ))}
       </div>
     </div>

@@ -17,38 +17,37 @@ import Pusher from "pusher-js";
 
 const TodoCard = ({ todo }) => {
   const [todoModalInput, setTodoModalInput] = useState(todo.todo);
-  const [cardState, setCardState] = useState(false);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const { todos, setTodos, updateTodo, removeTodo } = useContext(TodoContext);
+  const { todos, setTodos, updateTodo, removeTodo, cardID, setCardID } =
+    useContext(TodoContext);
 
+  // Task: To call update CRUD function and close the modal
   const updateTodoAndCloseModal = (todoID, todoModalInput) => {
-    console.log(todoID, todoModalInput);
     updateTodo(todoID, todoModalInput);
     handleClose();
-    setCardState(false);
+    setCardID("");
   };
 
+  // Task: Allow only one card to be minimzed and maximized
+  const toggleEditCard = (clickedCardID) => {
+    if (clickedCardID === cardID) {
+      setCardID("");
+    } else {
+      setCardID(clickedCardID);
+    }
+  };
+
+  // Track the modal input change
   const todoModalInputChange = (event) => {
     event.preventDefault();
 
     setTodoModalInput(event.target.value);
   };
 
-  useEffect(() => {
-    todos.map((todo, index) => {
-      if (todo.todo === "Play PUBG Mobile") {
-        // console.log("Gotchuuuuu!");
-        return (todo.todo = "Changed todo");
-      }
-    });
-    console.log(todos);
-  }, []);
-
   // Pusher-js or Pusher for updating todo
-  // TODO: Not working correctly yet! Not real-time yet!
   useEffect(() => {
     const pusher = new Pusher("eb0a335b1e346049726b", {
       cluster: "ap1",
@@ -56,15 +55,24 @@ const TodoCard = ({ todo }) => {
 
     const channel = pusher.subscribe("todos");
     channel.bind("updated", (updatedTodo) => {
-      // setTodos(
-      todos.map((todo) => {
+      let todo_ID = "";
+      todos.forEach((todo) => {
         if (todo._id === updatedTodo._id) {
-          // console.log("Gotchuuuuu!");
-          return (todo.todo = updatedTodo.todo);
+          return (todo_ID = todo._id);
         }
       });
-      // );
-      setTodos(todos);
+
+      let index = todos.findIndex((updatedTodo) => updatedTodo._id === todo_ID);
+
+      if (index === -1) {
+        console.log("Error occured while updating!");
+      } else {
+        setTodos([
+          ...todos.slice(0, index),
+          updatedTodo,
+          ...todos.slice(index + 1),
+        ]);
+      }
     });
 
     return () => {
@@ -73,9 +81,7 @@ const TodoCard = ({ todo }) => {
     };
   }, [todos]);
 
-  // console.log(todos[3]);
-
-  //Todo: Pusher for deletion is still not working correctly. Fix this!
+  //Todo: Pusher for deletion is still not working the way it is supposed to work. Fix soon?
   // useEffect(() => {
   //   const pusher = new Pusher("eb0a335b1e346049726b", {
   //     cluster: "ap1",
@@ -96,6 +102,7 @@ const TodoCard = ({ todo }) => {
   //   };
   // }, [todos]);
 
+  // Style for the modal (From Material UI)
   const style = {
     position: "absolute",
     top: "50%",
@@ -126,16 +133,16 @@ const TodoCard = ({ todo }) => {
         <Button
           size="small"
           variant="text"
-          onClick={() => setCardState(!cardState)}
+          onClick={() => toggleEditCard(todo._id)}
         >
-          {cardState ? (
+          {cardID === todo._id ? (
             <ExpandLessIcon style={{ color: "#90CAF9" }} />
           ) : (
             <ExpandMoreIcon style={{ color: "#90CAF9" }} />
           )}
         </Button>
         <CardActions>
-          {cardState && (
+          {cardID === todo._id && (
             <div className="card-body text-center">
               <Button
                 className="mx-3"
@@ -143,7 +150,7 @@ const TodoCard = ({ todo }) => {
                 color="success"
                 onClick={() => {
                   removeTodo(todo._id);
-                  setCardState(false);
+                  setCardID("");
                 }}
               >
                 <CheckCircleIcon />
@@ -158,37 +165,42 @@ const TodoCard = ({ todo }) => {
                 aria-describedby="modal-modal-description"
               >
                 <Box sx={style}>
-                  {todo.todo === todoModalInput ? (
-                    <Input
-                      style={{ color: "white" }}
-                      className="mx-5"
-                      type="text"
-                      defaultValue={todo.todo}
-                      onChange={todoModalInputChange}
-                      value={todoModalInput}
-                      error
-                    />
-                  ) : (
-                    <Input
-                      style={{ color: "white" }}
-                      className="mx-5"
-                      type="text"
-                      defaultValue={todo.todo}
-                      onChange={todoModalInputChange}
-                      value={todoModalInput}
-                    />
-                  )}
-                  <Button
-                    disabled={todo.todo === todoModalInput}
-                    className="mx-5 my-3"
-                    color="warning"
-                    variant="contained"
-                    onClick={() =>
-                      updateTodoAndCloseModal(todo._id, todoModalInput)
-                    }
-                  >
-                    <DriveFileRenameOutlineIcon style={{ color: "#0a1929" }} />
-                  </Button>
+                  <form>
+                    {todo.todo === todoModalInput ? (
+                      <Input
+                        style={{ color: "white" }}
+                        className="mx-5"
+                        type="text"
+                        defaultValue={todo.todo}
+                        onChange={todoModalInputChange}
+                        value={todoModalInput}
+                        error
+                      />
+                    ) : (
+                      <Input
+                        style={{ color: "white" }}
+                        className="mx-5"
+                        type="text"
+                        defaultValue={todo.todo}
+                        onChange={todoModalInputChange}
+                        value={todoModalInput}
+                      />
+                    )}
+                    <Button
+                      type="submit"
+                      disabled={todo.todo === todoModalInput}
+                      className="mx-5 my-3"
+                      color="warning"
+                      variant="contained"
+                      onClick={() =>
+                        updateTodoAndCloseModal(todo._id, todoModalInput)
+                      }
+                    >
+                      <DriveFileRenameOutlineIcon
+                        style={{ color: "#0a1929" }}
+                      />
+                    </Button>
+                  </form>
                 </Box>
               </Modal>
             </div>
@@ -201,7 +213,7 @@ const TodoCard = ({ todo }) => {
 
 export default TodoCard;
 
-// boostrap card
+// boostrap card (replaced with Material UI)
 {
   /* <div
         className="card shadow-lg text-bg-primary rounded my-2"

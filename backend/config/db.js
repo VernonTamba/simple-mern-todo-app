@@ -27,10 +27,7 @@ const connectDB = async () => {
       switch (change.operationType) {
         case "insert":
           const insertedTodoDetails = change.fullDocument;
-          pusher.trigger("todos", "inserted", {
-            todo: insertedTodoDetails.todo,
-            status: insertedTodoDetails.status,
-          });
+          pusher.trigger("todos", "inserted", insertedTodoDetails);
           break;
         case "delete":
           console.log(
@@ -40,6 +37,16 @@ const connectDB = async () => {
           // pusher.trigger("todos", "deleted", {
           //   _id: deletedTodoDetails._id,
           // });
+          break;
+        case "update":
+          console.log("Update occurred!");
+          const updatedTodoID = change.documentKey;
+          const updatedTodo = change.updateDescription.updatedFields;
+          pusher.trigger("todos", "updated", {
+            _id: updatedTodoID._id,
+            todo: updatedTodo.todo,
+          });
+          break;
           break;
         default:
           console.log("Error occurred while trigerring the Pusher!\n");
@@ -54,6 +61,7 @@ const connectDB = async () => {
 
 module.exports = connectDB;
 
+// Unused or removed codes (Stored down here just in case it is needed later)
 /*
 try {
     const conn = await mongoose.connect(process.env.MONGO_URI);
